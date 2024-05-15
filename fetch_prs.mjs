@@ -70,7 +70,7 @@ const run = async () => {
     });
 
     const prData = response.search.edges.map(edge => edge.node);
-    console.log('Fetched PR Data:', prData);
+    console.log('Fetched PR Data:', JSON.stringify(prData, null, 2));
 
     writeFileSync('prs.json', JSON.stringify(prData, null, 2));
   } catch (error) {
