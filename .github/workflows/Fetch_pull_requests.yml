@@ -46,7 +46,7 @@ jobs:
       id: fetch_prs
       uses: actions/github-script@v6
       with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
+        github-token: ${{ secrets.METRIC_TOKEN}}
         script: |
           const { graphql } = require("@octokit/graphql");
           const query = `
@@ -104,7 +104,7 @@ jobs:
             query,
             searchQuery,
             headers: {
-              authorization: `token ${{ secrets.GITHUB_TOKEN }}`
+              authorization: `token ${{ secrets.METRIC_TOKEN }}`
             }
           });
           console.log(response.search.edges.map(edge => edge.node));
@@ -122,6 +122,6 @@ jobs:
       uses: peter-evans/create-issue-from-file@v4
       with:
         title: Monthly Pull Request Metrics Report
-        token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ secrets.METRIC_TOKEN }}
         content-filepath: ./pull_request_metrics.md
         assignees: matos61
