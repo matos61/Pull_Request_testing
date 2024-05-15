@@ -17,9 +17,8 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
       with:
-        token: ${{ secrets.METRIC_TOKEN }}
-        repository: 'matos61/Pull_Request_testing' # Ensure this path is correct
-        ref: main # Ensure the branch name is correct
+        repository: 'matos61/Pull_Request_testing'
+        ref: main
 
     - name: List files
       run: |
@@ -48,6 +47,8 @@ jobs:
       run: echo ${{ env.last_month }}
 
     - name: Fetch pull requests
+      env:
+        GITHUB_TOKEN: ${{ secrets.METRIC_TOKEN }}
       run: |
         echo "Fetching pull requests"
         node fetch_prs.mjs
