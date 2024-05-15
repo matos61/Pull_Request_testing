@@ -19,6 +19,7 @@ jobs:
       with:
         repository: 'matos61/Pull_Request_testing'
         ref: main
+        token: ${{ secrets.METRIC_TOKEN }}
 
     - name: List files
       run: |
@@ -46,12 +47,6 @@ jobs:
     - name: Debug date range
       run: echo ${{ env.last_month }}
 
-    - name: Debug token
-      env:
-        GITHUB_TOKEN: ${{ secrets.METRIC_TOKEN }}
-      run: |
-        echo "GITHUB_TOKEN=${{ secrets.METRIC_TOKEN }}"
-
     - name: Fetch pull requests
       env:
         GITHUB_TOKEN: ${{ secrets.METRIC_TOKEN }}
@@ -62,7 +57,7 @@ jobs:
     - name: Generate pull request metrics
       run: |
         echo "Generating metrics report"
-        python generate_pr_metrics.py 'prs.json'
+        python generate_pr_metrics.py
 
     - name: Create issue
       uses: peter-evans/create-issue-from-file@v4
