@@ -37,10 +37,8 @@ def generate_markdown(pr_data):
         file.writelines(report_lines)
 
 def main():
-    pr_data_json = sys.argv[1]
-    print(f"PR Data JSON: {pr_data_json}")
-    pr_data = json.loads(pr_data_json)
-    print(f"Parsed PR Data: {pr_data}")
+    with open('prs.json', 'r') as file:
+        pr_data = json.load(file)
     generate_markdown(pr_data)
 
 if __name__ == "__main__":
