@@ -46,6 +46,12 @@ jobs:
     - name: Debug date range
       run: echo ${{ env.last_month }}
 
+    - name: Debug token
+      env:
+        GITHUB_TOKEN: ${{ secrets.METRIC_TOKEN }}
+      run: |
+        echo "GITHUB_TOKEN=${{ secrets.METRIC_TOKEN }}"
+
     - name: Fetch pull requests
       env:
         GITHUB_TOKEN: ${{ secrets.METRIC_TOKEN }}
