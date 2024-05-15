@@ -69,7 +69,10 @@ const run = async () => {
       },
     });
 
-    writeFileSync('prs.json', JSON.stringify(response.search.edges.map(edge => edge.node), null, 2));
+    const prData = response.search.edges.map(edge => edge.node);
+    console.log('Fetched PR Data:', prData);
+
+    writeFileSync('prs.json', JSON.stringify(prData, null, 2));
   } catch (error) {
     console.error('Error fetching pull requests:', error);
     process.exit(1);
