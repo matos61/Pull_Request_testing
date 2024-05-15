@@ -1,0 +1,117 @@
+name: Monthly Pull Request Metrics
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '3 2 1 * *'
+
+permissions:
+  issues: write
+  pull-requests: read
+
+jobs:
+  build:
+    name: pull request metrics
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+
+    - name: Get dates for last month
+      id: get_dates
+      shell: bash
+      run: |
+        first_day=$(date -d "last month" +%Y-%m-01)
+        last_day=$(date -d "$first_day +1 month -1 day" +%Y-%m-%d)
+        echo "first_day=$first_day" >> "$GITHUB_ENV"
+        echo "last_day=$last_day" >> "$GITHUB_ENV"
+        echo "last_month=$first_day..$last_day" >> "$GITHUB_ENV"
+
+    - name: Fetch pull requests
+      id: fetch_prs
+      uses: actions/github-script@v6
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const { graphql } = require("@octokit/graphql");
+          const query = `
+            query ($searchQuery: String!) {
+              search(query: $searchQuery, type: ISSUE, first: 100) {
+                edges {
+                  node {
+                    ... on PullRequest {
+                      number
+                      title
+                      createdAt
+                      closedAt
+                      mergedAt
+                      commits {
+                        totalCount
+                      }
+                      reviews {
+                        nodes {
+                          state
+                          author {
+                            login
+                          }
+                          submittedAt
+                        }
+                      }
+                      checks: commits(last: 1) {
+                        nodes {
+                          commit {
+                            status {
+                              contexts {
+                                context
+                                state
+                              }
+                            }
+                          }
+                        }
+                      }
+                      reviewRequests(first: 10) {
+                        nodes {
+                          requestedReviewer {
+                            ... on User {
+                              login
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          `;
+          const searchQuery = `repo:owner/repo is:pr created:${{ env.last_month }}`;
+          const response = await graphql({
+            query,
+            searchQuery,
+            headers: {
+              authorization: `token ${{ secrets.GITHUB_TOKEN }}`
+            }
+          });
+          return JSON.stringify(response.search.edges.map(edge => edge.node));
+
+    - name: Generate pull request metrics
+      run: |
+        echo "Generating metrics report"
+        python generate_pr_metrics.py '${{ steps.fetch_prs.outputs.result }}'
+
+    - name: Create issue
+      uses: peter-evans/create-issue-from-file@v4
+      with:
+        title: Monthly Pull Request Metrics Report
+        token: ${{ secrets.GITHUB_TOKEN }}
+        content-filepath: ./pull_request_metrics.md
+        assignees: matos61
