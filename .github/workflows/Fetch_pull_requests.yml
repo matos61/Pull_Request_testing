@@ -21,16 +21,12 @@ jobs:
         repository: 'matos61/Pull_Request_testing' # Ensure this path is correct
         ref: main # Ensure the branch name is correct
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
       with:
-        python-version: '3.x'
+        node-version: '14'
 
     - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-
-    - name: Install @octokit/graphql
       run: |
         npm install @octokit/graphql
 
@@ -48,80 +44,14 @@ jobs:
       run: echo ${{ env.last_month }}
 
     - name: Fetch pull requests
-      id: fetch_prs
-      uses: actions/github-script@v6
-      with:
-        github-token: ${{ secrets.METRIC_TOKEN }}
-        script: |
-          const { graphql } = require("@octokit/graphql");
-          const query = `
-            query ($searchQuery: String!) {
-              search(query: $searchQuery, type: ISSUE, first: 100) {
-                edges {
-                  node {
-                    ... on PullRequest {
-                      number
-                      title
-                      createdAt
-                      closedAt
-                      mergedAt
-                      commits {
-                        totalCount
-                      }
-                      reviews {
-                        nodes {
-                          state
-                          author {
-                            login
-                          }
-                          submittedAt
-                        }
-                      }
-                      commits(last: 1) {
-                        nodes {
-                          commit {
-                            status {
-                              contexts {
-                                context
-                                state
-                              }
-                            }
-                          }
-                        }
-                      }
-                      reviewRequests(first: 10) {
-                        nodes {
-                          requestedReviewer {
-                            ... on User {
-                              login
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          `;
-          const searchQuery = `repo:matos61/Pull_Request_testing is:pr created:${{ env.last_month }}`;
-          const response = await graphql({
-            query,
-            searchQuery,
-            headers: {
-              authorization: `token ${{ secrets.METRIC_TOKEN }}`
-            }
-          });
-          console.log(response.search.edges.map(edge => edge.node));
-          return JSON.stringify(response.search.edges.map(edge => edge.node));
-
-    - name: Debug PR data
-      run: echo '${{ steps.fetch_prs.outputs.result }}'
+      run: |
+        echo "Fetching pull requests"
+        node --experimental-modules fetch_prs.mjs
 
     - name: Generate pull request metrics
       run: |
         echo "Generating metrics report"
-        python generate_pr_metrics.py '${{ steps.fetch_prs.outputs.result }}'
+        python generate_pr_metrics.py 'prs.json'
 
     - name: Create issue
       uses: peter-evans/create-issue-from-file@v4
