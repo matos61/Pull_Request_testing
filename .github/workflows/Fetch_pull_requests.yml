@@ -17,6 +17,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
       with:
+        token: ${{ secrets.METRIC_TOKEN }}
         repository: 'matos61/Pull_Request_testing' # Ensure this path is correct
         ref: main # Ensure the branch name is correct
 
@@ -46,7 +47,7 @@ jobs:
       id: fetch_prs
       uses: actions/github-script@v6
       with:
-        github-token: ${{ secrets.METRIC_TOKEN}}
+        github-token: ${{ secrets.METRIC_TOKEN }}
         script: |
           const { graphql } = require("@octokit/graphql");
           const query = `
