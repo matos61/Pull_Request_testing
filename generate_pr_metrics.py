@@ -39,6 +39,9 @@ def generate_markdown(pr_data):
 def main():
     with open('prs.json', 'r') as file:
         pr_data = json.load(file)
+    
+    print("PR Data Loaded:", json.dumps(pr_data, indent=2))
+    
     generate_markdown(pr_data)
 
 if __name__ == "__main__":
