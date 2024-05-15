@@ -1,4 +1,5 @@
 import { graphql } from '@octokit/graphql';
+import fetch from 'node-fetch';
 import { writeFileSync } from 'fs';
 
 const run = async () => {
@@ -61,6 +62,9 @@ const run = async () => {
     searchQuery,
     headers: {
       authorization: `token ${token}`,
+    },
+    request: {
+      fetch,
     },
   });
 
