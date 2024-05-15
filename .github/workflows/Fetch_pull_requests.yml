@@ -21,6 +21,10 @@ jobs:
         repository: 'matos61/Pull_Request_testing' # Ensure this path is correct
         ref: main # Ensure the branch name is correct
 
+    - name: List files
+      run: |
+        ls -al
+
     - name: Set up Node.js
       uses: actions/setup-node@v2
       with:
@@ -46,7 +50,7 @@ jobs:
     - name: Fetch pull requests
       run: |
         echo "Fetching pull requests"
-        node --experimental-modules fetch_prs.mjs
+        node fetch_prs.mjs
 
     - name: Generate pull request metrics
       run: |
