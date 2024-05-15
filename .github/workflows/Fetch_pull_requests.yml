@@ -30,6 +30,10 @@ jobs:
       run: |
         python -m pip install --upgrade pip
 
+    - name: Install @octokit/graphql
+      run: |
+        npm install @octokit/graphql
+
     - name: Get dates for last month
       id: get_dates
       shell: bash
