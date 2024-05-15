@@ -19,19 +19,8 @@ const run = async () => {
               createdAt
               closedAt
               mergedAt
-              commits {
-                totalCount
-              }
-              reviews {
-                nodes {
-                  state
-                  author {
-                    login
-                  }
-                  submittedAt
-                }
-              }
               commits(last: 1) {
+                totalCount
                 nodes {
                   commit {
                     status {
@@ -41,6 +30,15 @@ const run = async () => {
                       }
                     }
                   }
+                }
+              }
+              reviews {
+                nodes {
+                  state
+                  author {
+                    login
+                  }
+                  submittedAt
                 }
               }
               reviewRequests(first: 10) {
