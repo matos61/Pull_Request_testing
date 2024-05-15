@@ -16,6 +16,9 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
+      with:
+        repository: 'matos61/Pull_Request_testing' # Ensure this path is correct
+        ref: main # Ensure the branch name is correct
 
     - name: Set up Python
       uses: actions/setup-python@v2
@@ -35,6 +38,9 @@ jobs:
         echo "first_day=$first_day" >> "$GITHUB_ENV"
         echo "last_day=$last_day" >> "$GITHUB_ENV"
         echo "last_month=$first_day..$last_day" >> "$GITHUB_ENV"
+
+    - name: Debug date range
+      run: echo ${{ env.last_month }}
 
     - name: Fetch pull requests
       id: fetch_prs
@@ -66,7 +72,7 @@ jobs:
                           submittedAt
                         }
                       }
-                      checks: commits(last: 1) {
+                      commits(last: 1) {
                         nodes {
                           commit {
                             status {
@@ -93,7 +99,7 @@ jobs:
               }
             }
           `;
-          const searchQuery = `repo:owner/repo is:pr created:${{ env.last_month }}`;
+          const searchQuery = `repo:matos61/Pull_Request_testing is:pr created:${{ env.last_month }}`;
           const response = await graphql({
             query,
             searchQuery,
@@ -101,7 +107,11 @@ jobs:
               authorization: `token ${{ secrets.GITHUB_TOKEN }}`
             }
           });
+          console.log(response.search.edges.map(edge => edge.node));
           return JSON.stringify(response.search.edges.map(edge => edge.node));
+
+    - name: Debug PR data
+      run: echo '${{ steps.fetch_prs.outputs.result }}'
 
     - name: Generate pull request metrics
       run: |
