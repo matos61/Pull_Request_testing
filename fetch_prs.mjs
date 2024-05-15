@@ -3,7 +3,7 @@ import fetch from 'node-fetch';
 import { writeFileSync } from 'fs';
 
 const run = async () => {
-  const searchQuery = process.env.SEARCH_QUERY;
+  const searchQuery = process.env.SEARCH_QUERY || 'repo:matos61/Pull_Request_testing is:pr created:2024-04-01..2024-04-30';
   const token = process.env.GITHUB_TOKEN;
 
   const query = `
