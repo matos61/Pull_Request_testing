@@ -41,7 +41,7 @@ const run = async () => {
                   }
                 }
               }
-              reviews {
+              reviews(first: 10) {
                 nodes {
                   state
                   author {
