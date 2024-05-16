@@ -3,7 +3,15 @@ import fetch from 'node-fetch';
 import { writeFileSync } from 'fs';
 
 const run = async () => {
-  const searchQuery = process.env.SEARCH_QUERY || `repo:matos61/Pull_Request_testing is:pr created:${process.env.first_day}..${process.env.last_day}`;
+  // Calculate the start and end dates for the current week
+  const today = new Date();
+  const firstDayOfWeek = new Date(today.setDate(today.getDate() - today.getDay())); // Sunday
+  const lastDayOfWeek = new Date(today.setDate(today.getDate() - today.getDay() + 6)); // Saturday
+
+  const firstDay = firstDayOfWeek.toISOString().split('T')[0];
+  const lastDay = lastDayOfWeek.toISOString().split('T')[0];
+
+  const searchQuery = `repo:matos61/Pull_Request_testing is:pr created:${firstDay}..${lastDay}`;
   const token = process.env.GITHUB_TOKEN;
 
   console.log(`Using GitHub token: ${token ? 'Provided' : 'Not provided'}`);
