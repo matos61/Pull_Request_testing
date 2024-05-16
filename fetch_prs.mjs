@@ -3,10 +3,11 @@ import fetch from 'node-fetch';
 import { writeFileSync } from 'fs';
 
 const run = async () => {
-  const searchQuery = process.env.SEARCH_QUERY || 'repo:matos61/Pull_Request_testing is:pr created:2024-04-01..2024-04-30';
+  const searchQuery = process.env.SEARCH_QUERY || `repo:matos61/Pull_Request_testing is:pr created:${process.env.first_day}..${process.env.last_day}`;
   const token = process.env.GITHUB_TOKEN;
 
   console.log(`Using GitHub token: ${token ? 'Provided' : 'Not provided'}`);
+  console.log(`Search Query: ${searchQuery}`);
 
   const query = `
     query ($searchQuery: String!) {
