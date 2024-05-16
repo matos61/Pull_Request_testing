@@ -21,6 +21,21 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: matos61/Pull_Request_testing
+matos61-patch-2
+      - name: Install Dependencies
+        run: npm install
+      
+      - name: Lint Code
+        run: npm run lint
+      
+      - name: Run Unit Tests
+        run: npm test
+      
+      - name: Run Integration Tests
+        run: npm run test:integration
+      
+      - name: Check Code Coverage
+        run: npm run coverage
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -33,3 +48,4 @@ jobs:
 
       - name: Run tests
         run: python -m unittest discover -s . -p "test_failure.py"
+ main

@@ -1,0 +1,8 @@
+import unittest
+
+class TestFailure(unittest.TestCase):
+    def test_always_fails(self):
+        self.assertEqual(1, 0, "This test is designed to fail")
+
+if __name__ == '__main__':
+    unittest.main()
