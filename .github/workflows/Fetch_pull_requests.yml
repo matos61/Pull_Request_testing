@@ -35,19 +35,6 @@ jobs:
       run: |
         npm install @octokit/graphql node-fetch
 
-    - name: Get dates for last week
-      id: get_dates
-      shell: bash
-      run: |
-        first_day=$(date -d "last week" +%Y-%m-%d)
-        last_day=$(date -d "$first_day +6 days" +%Y-%m-%d)
-        echo "first_day=$first_day" >> "$GITHUB_ENV"
-        echo "last_day=$last_day" >> "$GITHUB_ENV"
-        echo "last_week=$first_day..$last_day" >> "$GITHUB_ENV"
-
-    - name: Debug date range
-      run: echo "Date range: ${{ env.last_week }}"
-
     - name: Fetch pull requests
       env:
         GITHUB_TOKEN: ${{ secrets.METRIC_TOKEN }}
