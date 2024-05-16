@@ -1,8 +1,9 @@
-name: Monthly Pull Request Metrics
+name: Weekly Pull Request Metrics
+
 on:
   workflow_dispatch:
   schedule:
-    - cron: '3 2 1 * *'
+    - cron: '0 0 * * 0'  # This will run the workflow every Sunday at midnight UTC
 
 permissions:
   issues: write
@@ -34,18 +35,18 @@ jobs:
       run: |
         npm install @octokit/graphql node-fetch
 
-    - name: Get dates for last month
+    - name: Get dates for last week
       id: get_dates
       shell: bash
       run: |
-        first_day=$(date -d "last month" +%Y-%m-01)
-        last_day=$(date -d "$first_day +1 month -1 day" +%Y-%m-%d)
+        first_day=$(date -d "last week" +%Y-%m-%d)
+        last_day=$(date -d "$first_day +6 days" +%Y-%m-%d)
         echo "first_day=$first_day" >> "$GITHUB_ENV"
         echo "last_day=$last_day" >> "$GITHUB_ENV"
-        echo "last_month=$first_day..$last_day" >> "$GITHUB_ENV"
+        echo "last_week=$first_day..$last_day" >> "$GITHUB_ENV"
 
     - name: Debug date range
-      run: echo ${{ env.last_month }}
+      run: echo "Date range: ${{ env.last_week }}"
 
     - name: Fetch pull requests
       env:
@@ -53,6 +54,7 @@ jobs:
       run: |
         echo "Fetching pull requests"
         node fetch_prs.mjs
+        cat prs.json  # Output the content of prs.json to the log for debugging
 
     - name: Generate pull request metrics
       run: |
@@ -62,7 +64,7 @@ jobs:
     - name: Create issue
       uses: peter-evans/create-issue-from-file@v4
       with:
-        title: Monthly Pull Request Metrics Report
+        title: Weekly Pull Request Metrics Report
         token: ${{ secrets.METRIC_TOKEN }}
         content-filepath: ./pull_request_metrics.md
         assignees: matos61
