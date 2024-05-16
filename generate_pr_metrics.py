@@ -9,16 +9,19 @@ def calculate_time_open(created_at, closed_at):
 
 def is_check_passing(checks):
     for check in checks:
-        context = check['commit']['status']['contexts']
-        for status in context:
-            if status['context'] != "codeclimate":
-                if status['state'] != "SUCCESS":
+        status = check['commit'].get('status')
+        if status is None:
+            continue  # If status is None, skip this check
+        contexts = status['contexts']
+        for context in contexts:
+            if context['context'] != "codeclimate":
+                if context['state'] != "SUCCESS":
                     return False
     return True
 
 def generate_markdown(pr_data):
     report_lines = [
-        "# Monthly Pull Request Metrics Report\n",
+        "# Weekly Pull Request Metrics Report\n",
         "| PR Number | Title | Time Open (days) | Checks Passing | Codeowner Reviews |\n",
         "|-----------|-------|------------------|----------------|-------------------|\n",
     ]
