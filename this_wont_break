@@ -1,0 +1,11 @@
+import unittest
+
+class FailingTestCase(unittest.TestCase):
+    def test_fail(self):
+        self.assertEqual(1, 0, "This test is designed to fail.")
+
+    def test_another_fail(self):
+        self.assertTrue(False, "This is another intentional failure.")
+
+if __name__ == '__main__':
+    unittest.main()
