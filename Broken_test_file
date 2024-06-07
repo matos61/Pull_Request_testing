@@ -1,0 +1,8 @@
+import unittest
+
+class TestFail(unittest.TestCase):
+    def test_failure(self):
+        self.fail("This test is designed to fail the pull request")
+
+if __name__ == '__main__':
+    unittest.main()
